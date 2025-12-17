@@ -21,6 +21,14 @@ class Arithmetic:
         if b == 0:
             raise ArithmeticError("Division by zero")
         return a // b
+    
+    def multiply(self, a, b):
+        """곱셈 메서드"""
+        return a * b
+    
+    def quotient(self, a, b):
+        """소수점 나눗셈 메서드"""
+        return a / b
 
 
 if __name__ == '__main__':
@@ -44,10 +52,17 @@ if __name__ == '__main__':
     print(f"  subtract(5, 2) = {calc.subtract(5, 2)}")
     print()
     
+    # 곱셈 예제
+    print("[곱셈 연산]")
+    print(f"  multiply(-5, -3) = {calc.multiply(-5, -3)}")
+    print(f"  multiply(0, 10) = {calc.multiply(0, 10)}")
+    print()
+    
     # 나눗셈 예제
     print("[나눗셈 연산]")
-    print(f"  divide(5, 2) = {calc.divide(5, 2)}")
+    print(f"  divide(5, 2) = {calc.divide(5, 2)} (정수 나눗셈)")
     print(f"  divide(-10, 2) = {calc.divide(-10, 2)}")
+    print(f"  quotient(5, 2) = {calc.quotient(5, 2)} (소수점 나눗셈)")
     print()
     
     # 예외 처리 예제

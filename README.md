@@ -51,6 +51,51 @@ TDD(Test-Driven Development) 방식 중 RED-GREEN-REFACTOR 사이클을 따라 �
 - 테스트를 통과하는 최소한의 코드를 작성합니다.
 - 모든 테스트 케이스가 통과하는지 확인합니다.
 
+#### GREEN 단계 구현 목록
+
+##### 높은 우선순위 (중요도: 중요) 🔴
+1. **`add(a, b)` 메서드 구현**
+   - 양수 덧셈: `add(1, 10) → 11`
+   - 0과 양수 덧셈: `add(0, 1) → 1`
+   - 테스트 케이스: `test_add_positive_numbers`, `test_add_zero_and_positive`
+
+2. **`subtract(a, b)` 메서드 구현**
+   - 양수 뺄셈: `subtract(5, 2) → 3`
+   - 테스트 케이스: `test_subtract_positive_numbers`
+
+3. **`divide(a, b)` 메서드 구현**
+   - 정수 나눗셈: `divide(5, 2) → 2` (정수 결과)
+   - 음수/양수 나눗셈: `divide(-10, 2) → -5`
+   - 0으로 나누기 예외 처리: `divide(0, 0) → ArithmeticError` 발생
+   - 테스트 케이스: `test_divide_integer`, `test_divide_negative_by_positive`, `test_divide_by_zero`
+
+##### 중간 우선순위 (중요도: 보통) 🟡
+4. **`add(a, b)` 메서드 확장**
+   - 음수 덧셈: `add(-1, -10) → -11`
+   - 테스트 케이스: `test_add_negative_numbers`
+
+5. **`multiply(a, b)` 메서드 구현**
+   - 음수 곱셈: `multiply(-5, -3) → 15`
+   - 테스트 케이스: `test_multiply_negative_numbers`
+
+6. **`quotient(a, b)` 메서드 구현**
+   - 소수점 나눗셈: `quotient(5, 2) → 2.5`
+   - 테스트 케이스: `test_divide_quotient`
+
+##### 낮은 우선순위 (중요도: 낮음) 🟢
+7. **`multiply(a, b)` 메서드 확장**
+   - 0 곱셈: `multiply(0, 10) → 0`
+   - 테스트 케이스: `test_multiply_by_zero`
+
+#### 구현 체크리스트
+- [ ] `arithmetic.py` 모듈 생성
+- [ ] `Arithmetic` 클래스 구현
+- [ ] 높은 우선순위 메서드 구현 (1-3)
+- [ ] 중간 우선순위 메서드 구현 (4-6)
+- [ ] 낮은 우선순위 메서드 구현 (7)
+- [ ] 모든 테스트 케이스 통과 확인 (10/10)
+- [ ] 예외 처리 검증 (`ArithmeticError`)
+
 ### 3. REFACTOR 단계
 - 코드를 개선하고 리팩토링합니다.
 - 테스트가 여전히 통과하는지 확인합니다.

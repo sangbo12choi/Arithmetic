@@ -53,22 +53,6 @@ TDD(Test-Driven Development) 방식 중 RED-GREEN-REFACTOR 사이클을 따라 �
 
 #### GREEN 단계 구현 목록
 
-##### 높은 우선순위 (중요도: 중요) 🔴
-1. **`add(a, b)` 메서드 구현**
-   - 양수 덧셈: `add(1, 10) → 11`
-   - 0과 양수 덧셈: `add(0, 1) → 1`
-   - 테스트 케이스: `test_add_positive_numbers`, `test_add_zero_and_positive`
-
-2. **`subtract(a, b)` 메서드 구현**
-   - 양수 뺄셈: `subtract(5, 2) → 3`
-   - 테스트 케이스: `test_subtract_positive_numbers`
-
-3. **`divide(a, b)` 메서드 구현**
-   - 정수 나눗셈: `divide(5, 2) → 2` (정수 결과)
-   - 음수/양수 나눗셈: `divide(-10, 2) → -5`
-   - 0으로 나누기 예외 처리: `divide(0, 0) → ArithmeticError` 발생
-   - 테스트 케이스: `test_divide_integer`, `test_divide_negative_by_positive`, `test_divide_by_zero`
-
 ##### 중간 우선순위 (중요도: 보통) 🟡
 4. **`add(a, b)` 메서드 확장**
    - 음수 덧셈: `add(-1, -10) → -11`

@@ -88,13 +88,13 @@ TDD(Test-Driven Development) 방식 중 RED-GREEN-REFACTOR 사이클을 따라 �
    - 테스트 케이스: `test_multiply_by_zero`
 
 #### 구현 체크리스트
-- [ ] `arithmetic.py` 모듈 생성
-- [ ] `Arithmetic` 클래스 구현
-- [ ] 높은 우선순위 메서드 구현 (1-3)
-- [ ] 중간 우선순위 메서드 구현 (4-6)
-- [ ] 낮은 우선순위 메서드 구현 (7)
-- [ ] 모든 테스트 케이스 통과 확인 (10/10)
-- [ ] 예외 처리 검증 (`ArithmeticError`)
+- [x] `arithmetic.py` 모듈 생성
+- [x] `Arithmetic` 클래스 구현
+- [x] 높은 우선순위 메서드 구현 (1-3)
+- [x] 중간 우선순위 메서드 구현 (4-6)
+- [x] 낮은 우선순위 메서드 구현 (7)
+- [x] 모든 테스트 케이스 통과 확인 (10/10)
+- [x] 예외 처리 검증 (`ArithmeticError`)
 
 ### 3. REFACTOR 단계
 - 코드를 개선하고 리팩토링합니다.

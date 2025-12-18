@@ -35,6 +35,27 @@ class Arithmetic:
         if b == 0:
             raise ArithmeticError("Division by zero")
         return a % b
+    
+    def sqrt(self, a):
+        """제곱근 계산 메서드"""
+        import math
+        if a < 0:
+            raise ArithmeticError("Cannot calculate square root of negative number")
+        return math.sqrt(a)
+    
+    def log(self, a):
+        """자연 로그 계산 메서드 (밑이 e)"""
+        import math
+        if a <= 0:
+            raise ArithmeticError("Cannot calculate logarithm of non-positive number")
+        return math.log(a)
+    
+    def log10(self, a):
+        """상용 로그 계산 메서드 (밑이 10)"""
+        import math
+        if a <= 0:
+            raise ArithmeticError("Cannot calculate logarithm of non-positive number")
+        return math.log10(a)
 
 
 if __name__ == '__main__':

@@ -35,9 +35,9 @@ class CalculatorWindow(QMainWindow):
         self._service = calculator_service if calculator_service is not None else CalculatorService()
         
         # 계산기 상태
-        self._first_number: Optional[int] = None
+        self._first_number: Optional[float] = None
         self._operator: Optional[str] = None
-        self._second_number: Optional[int] = None
+        self._second_number: Optional[float] = None
         self._current_input: str = ""
         self._waiting_for_operand: bool = True
         
@@ -50,7 +50,7 @@ class CalculatorWindow(QMainWindow):
     def _init_ui(self):
         """UI 초기화"""
         self.setWindowTitle("계산기")
-        self.setFixedSize(300, 400)
+        self.setFixedSize(360, 480)  # 나누기 버튼 추가로 너비 증가
         
         # 중앙 위젯
         central_widget = QWidget()
@@ -60,41 +60,46 @@ class CalculatorWindow(QMainWindow):
         main_layout = QVBoxLayout()
         central_widget.setLayout(main_layout)
         
-        # 디스플레이 영역
+        # 디스플레이 영역 (입력 과정 + 결과)
         display_layout = QVBoxLayout()
         
-        # 입력 표시 라인
-        self._input_label = QLabel("0")
+        # 입력 과정 표시 라인 (상단)
+        self._input_label = QLabel("")
         self._input_label.setAlignment(Qt.AlignmentFlag.AlignRight)
+        input_font = QFont()
+        input_font.setPointSize(14)
+        self._input_label.setFont(input_font)
         self._input_label.setStyleSheet("""
             QLabel {
-                background-color: #f0f0f0;
+                background-color: white;
                 border: 1px solid #ccc;
-                padding: 5px;
+                padding: 8px;
                 font-size: 14px;
                 color: #666;
             }
         """)
-        self._input_label.setFixedHeight(30)
+        self._input_label.setFixedHeight(35)
         display_layout.addWidget(self._input_label)
         
-        # 결과 표시 라인
-        self._result_label = QLabel("")
+        # 결과 표시 라인 (하단)
+        self._result_label = QLabel("0")
+        self._result_label.setWordWrap(False)
         self._result_label.setAlignment(Qt.AlignmentFlag.AlignRight)
-        font = QFont()
-        font.setPointSize(18)
-        font.setBold(True)
-        self._result_label.setFont(font)
+        result_font = QFont()
+        result_font.setPointSize(24)
+        result_font.setBold(True)
+        self._result_label.setFont(result_font)
         self._result_label.setStyleSheet("""
             QLabel {
                 background-color: white;
                 border: 1px solid #ccc;
-                padding: 10px;
-                font-size: 18px;
+                padding: 15px;
+                font-size: 24px;
                 font-weight: bold;
+                color: black;
             }
         """)
-        self._result_label.setFixedHeight(50)
+        self._result_label.setFixedHeight(70)
         display_layout.addWidget(self._result_label)
         
         main_layout.addLayout(display_layout)
@@ -159,33 +164,39 @@ class CalculatorWindow(QMainWindow):
         """
         
         # 키패드 버튼 생성 (이미지 레이아웃에 맞춤)
-        # Row 1: 7, 8, 9, ×
+        # Row 1: 7, 8, 9, ×, ÷
         self._create_button("7", number_button_style, keypad_layout, 0, 0)
         self._create_button("8", number_button_style, keypad_layout, 0, 1)
         self._create_button("9", number_button_style, keypad_layout, 0, 2)
         self._create_button("×", operator_button_style, keypad_layout, 0, 3)
+        self._create_button("÷", operator_button_style, keypad_layout, 0, 4)
         
-        # Row 2: 4, 5, 6, −
+        # Row 2: 4, 5, 6, −, √
         self._create_button("4", number_button_style, keypad_layout, 1, 0)
         self._create_button("5", number_button_style, keypad_layout, 1, 1)
         self._create_button("6", number_button_style, keypad_layout, 1, 2)
         self._create_button("−", operator_button_style, keypad_layout, 1, 3)
+        self._create_button("√", operator_button_style, keypad_layout, 1, 4)
         
-        # Row 3: 1, 2, 3, +
+        # Row 3: 1, 2, 3, +, log
         self._create_button("1", number_button_style, keypad_layout, 2, 0)
         self._create_button("2", number_button_style, keypad_layout, 2, 1)
         self._create_button("3", number_button_style, keypad_layout, 2, 2)
         self._create_button("+", operator_button_style, keypad_layout, 2, 3)
+        self._create_button("log", operator_button_style, keypad_layout, 2, 4)
         
-        # Row 4: +/-, 0, ., =
-        self._create_button("+/-", operator_button_style, keypad_layout, 3, 0)
-        self._create_button("0", number_button_style, keypad_layout, 3, 1)
-        self._create_button(".", operator_button_style, keypad_layout, 3, 2)
-        self._create_button("=", equals_button_style, keypad_layout, 3, 3)
+        # Row 4: C, +/-, 0, .
+        self._create_button("C", operator_button_style, keypad_layout, 3, 0)
+        self._create_button("+/-", operator_button_style, keypad_layout, 3, 1)
+        self._create_button("0", number_button_style, keypad_layout, 3, 2)
+        self._create_button(".", operator_button_style, keypad_layout, 3, 3)
+        
+        # Row 5: = 버튼 (전체 너비)
+        self._create_button("=", equals_button_style, keypad_layout, 4, 0, 1, 5)  # 1행 5열 차지
         
         main_layout.addLayout(keypad_layout)
     
-    def _create_button(self, text: str, style: str, layout: QGridLayout, row: int, col: int):
+    def _create_button(self, text: str, style: str, layout: QGridLayout, row: int, col: int, rowspan: int = 1, colspan: int = 1):
         """
         버튼 생성 및 레이아웃에 추가
         
@@ -195,27 +206,33 @@ class CalculatorWindow(QMainWindow):
             layout: 그리드 레이아웃
             row: 행 위치
             col: 열 위치
+            rowspan: 행 병합 개수 (기본값: 1)
+            colspan: 열 병합 개수 (기본값: 1)
         """
         button = QPushButton(text)
         button.setStyleSheet(style)
         
         # 버튼 클릭 이벤트 연결
-        # functools.partial을 사용하여 클로저 문제 완전 해결
+        # PyQt의 clicked 시그널은 bool 값을 전달하므로, 람다로 감싸서 처리
         if text.isdigit() or text == ".":
             # 숫자 버튼: 각 버튼에 고유한 텍스트를 전달
-            button.clicked.connect(partial(self._on_number_clicked, text))
-        elif text in ["+", "−", "×", "÷"]:
+            # clicked(bool) 시그널을 받아서 digit만 전달
+            button.clicked.connect(lambda checked=False, t=text: self._on_number_clicked(t))
+        elif text in ["+", "−", "×", "÷", "√", "log"]:
             # 연산자 버튼: 각 버튼에 고유한 연산자를 전달
-            button.clicked.connect(partial(self._on_operator_clicked, text))
+            button.clicked.connect(lambda checked=False, t=text: self._on_operator_clicked(t))
         elif text == "=":
             # 등호 버튼
             button.clicked.connect(self._on_equals_clicked)
         elif text == "+/-":
             # 부호 변경 버튼
             button.clicked.connect(self._on_sign_change_clicked)
+        elif text == "C":
+            # 초기화 버튼
+            button.clicked.connect(self._on_clear_clicked)
         
         # 레이아웃에 버튼 추가 (이벤트 연결 후)
-        layout.addWidget(button, row, col)
+        layout.addWidget(button, row, col, rowspan, colspan)
     
     def _connect_signals(self):
         """시그널 연결"""
@@ -245,14 +262,40 @@ class CalculatorWindow(QMainWindow):
             "+": "+",
             "−": "-",
             "×": "*",
-            "÷": "/"
+            "÷": "/",
+            "√": "sqrt",
+            "log": "log10"
         }
         internal_operator = operator_map.get(operator, operator)
         
+        # 단일 인자 연산 처리 (√, log)
+        unary_operators = ["sqrt", "log", "log10"]
+        if internal_operator in unary_operators:
+            try:
+                number = float(self._current_input) if self._current_input else 0
+                result = self._service.calculate(number, internal_operator)
+                operation_str = self._service.format_operation(number, internal_operator, None, use_gui_display=True)
+                
+                # 입력 과정 표시
+                self._input_label.setText(f"{operation_str} =")
+                
+                # 결과 표시
+                self.display_result(str(result))
+                
+                # 상태 초기화 (계산 결과를 현재 입력으로 설정)
+                self._current_input = str(result)
+                self._first_number = None
+                self._operator = None
+                self._waiting_for_operand = True
+            except (ValueError, ArithmeticError) as e:
+                self.display_error(str(e))
+            return
+        
+        # 이항 연산 처리
         if self._first_number is None:
             # 첫 번째 숫자 입력 완료
             try:
-                self._first_number = int(self._current_input)
+                self._first_number = float(self._current_input) if self._current_input else 0
                 self._operator = internal_operator
                 self._waiting_for_operand = True
                 self._update_input_display()
@@ -271,7 +314,7 @@ class CalculatorWindow(QMainWindow):
         """등호 버튼 클릭 처리"""
         if self._first_number is not None and self._operator is not None:
             try:
-                self._second_number = int(self._current_input)
+                self._second_number = float(self._current_input)
                 self._perform_calculation(self._first_number, self._operator, self._second_number)
             except ValueError:
                 self.display_error("올바른 숫자를 입력하세요.")
@@ -285,17 +328,23 @@ class CalculatorWindow(QMainWindow):
                 self._current_input = "-" + self._current_input
             self._update_display()
     
-    def _perform_calculation(self, a: int, operator: str, b: int):
+    def _on_clear_clicked(self):
+        """초기화 버튼 클릭 처리"""
+        self._reset_calculator()
+        # 입력 라벨도 초기화
+        self._input_label.setText("")
+    
+    def _perform_calculation(self, a: float, operator: str, b: float = None):
         """계산 수행"""
         try:
             result = self._service.calculate(a, operator, b)
             operation_str = self._service.format_operation(a, operator, b, use_gui_display=True)
             
+            # 입력 과정 표시
+            self._input_label.setText(f"{operation_str} =")
+            
             # 결과 표시
             self.display_result(str(result))
-            
-            # 계산 과정 표시
-            self._input_label.setText(f"{operation_str} =")
             
             # 상태 초기화 (계산 결과를 첫 번째 숫자로 설정)
             self._first_number = result
@@ -318,13 +367,19 @@ class CalculatorWindow(QMainWindow):
         self._second_number = None
         self._current_input = ""
         self._waiting_for_operand = True
+        self._input_label.setText("")
         self._update_display()
     
     def _update_display(self):
         """디스플레이 업데이트"""
         # 현재 입력값을 결과 라벨에 표시
         display_text = self._current_input if self._current_input else "0"
+        
+        # 라벨 텍스트 설정
         self._result_label.setText(display_text)
+        
+        # 화면 즉시 갱신
+        self._result_label.repaint()
     
     def _update_input_display(self):
         """입력 디스플레이 업데이트"""
@@ -337,6 +392,8 @@ class CalculatorWindow(QMainWindow):
             }
             op_str = operator_display.get(self._operator, self._operator)
             self._input_label.setText(f"{self._first_number} {op_str}")
+        else:
+            self._input_label.setText("")
     
     # CalculatorView 인터페이스 구현
     def display_input(self, text: str) -> None:
@@ -354,8 +411,8 @@ class CalculatorWindow(QMainWindow):
             QLabel {
                 background-color: white;
                 border: 1px solid #ff0000;
-                padding: 10px;
-                font-size: 18px;
+                padding: 15px;
+                font-size: 24px;
                 font-weight: bold;
                 color: #ff0000;
             }
@@ -366,9 +423,10 @@ class CalculatorWindow(QMainWindow):
             QLabel {
                 background-color: white;
                 border: 1px solid #ccc;
-                padding: 10px;
-                font-size: 18px;
+                padding: 15px;
+                font-size: 24px;
                 font-weight: bold;
+                color: black;
             }
         """))
     

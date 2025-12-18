@@ -29,6 +29,12 @@ class Arithmetic:
     def quotient(self, a, b):
         """소수점 나눗셈 메서드"""
         return a / b
+    
+    def modulo(self, a, b):
+        """나머지 연산 메서드"""
+        if b == 0:
+            raise ArithmeticError("Division by zero")
+        return a % b
 
 
 if __name__ == '__main__':

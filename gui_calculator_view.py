@@ -4,6 +4,7 @@ CalculatorView 인터페이스의 GUI 구현체
 """
 
 import sys
+from functools import partial
 from typing import Tuple, Optional
 from PyQt6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QGridLayout, QPushButton, 
@@ -11,11 +12,10 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QFont
-from calculator_view import CalculatorView
 from calculator_service import CalculatorService
 
 
-class CalculatorWindow(QMainWindow, CalculatorView):
+class CalculatorWindow(QMainWindow):
     """
     PyQt 기반 계산기 윈도우
     이미지와 동일한 키패드 레이아웃 구현
@@ -38,11 +38,14 @@ class CalculatorWindow(QMainWindow, CalculatorView):
         self._first_number: Optional[int] = None
         self._operator: Optional[str] = None
         self._second_number: Optional[int] = None
-        self._current_input: str = "0"
+        self._current_input: str = ""
         self._waiting_for_operand: bool = True
         
         self._init_ui()
         self._connect_signals()
+        
+        # 초기 디스플레이 설정
+        self._update_display()
     
     def _init_ui(self):
         """UI 초기화"""
@@ -76,7 +79,7 @@ class CalculatorWindow(QMainWindow, CalculatorView):
         display_layout.addWidget(self._input_label)
         
         # 결과 표시 라인
-        self._result_label = QLabel("0")
+        self._result_label = QLabel("")
         self._result_label.setAlignment(Qt.AlignmentFlag.AlignRight)
         font = QFont()
         font.setPointSize(18)
@@ -195,17 +198,24 @@ class CalculatorWindow(QMainWindow, CalculatorView):
         """
         button = QPushButton(text)
         button.setStyleSheet(style)
-        layout.addWidget(button, row, col)
         
         # 버튼 클릭 이벤트 연결
+        # functools.partial을 사용하여 클로저 문제 완전 해결
         if text.isdigit() or text == ".":
-            button.clicked.connect(lambda: self._on_number_clicked(text))
+            # 숫자 버튼: 각 버튼에 고유한 텍스트를 전달
+            button.clicked.connect(partial(self._on_number_clicked, text))
         elif text in ["+", "−", "×", "÷"]:
-            button.clicked.connect(lambda: self._on_operator_clicked(text))
+            # 연산자 버튼: 각 버튼에 고유한 연산자를 전달
+            button.clicked.connect(partial(self._on_operator_clicked, text))
         elif text == "=":
+            # 등호 버튼
             button.clicked.connect(self._on_equals_clicked)
         elif text == "+/-":
+            # 부호 변경 버튼
             button.clicked.connect(self._on_sign_change_clicked)
+        
+        # 레이아웃에 버튼 추가 (이벤트 연결 후)
+        layout.addWidget(button, row, col)
     
     def _connect_signals(self):
         """시그널 연결"""
@@ -213,13 +223,17 @@ class CalculatorWindow(QMainWindow, CalculatorView):
     
     def _on_number_clicked(self, digit: str):
         """숫자 버튼 클릭 처리"""
+        # 새 피연산자 입력 시작 (연산자 입력 후 또는 초기 상태)
         if self._waiting_for_operand:
             self._current_input = digit
             self._waiting_for_operand = False
         else:
-            if self._current_input == "0":
+            # 기존 숫자에 추가 입력
+            if not self._current_input or self._current_input == "0":
+                # 빈 문자열이거나 "0"이면 새 숫자로 교체
                 self._current_input = digit
             else:
+                # 기존 숫자 뒤에 추가
                 self._current_input += digit
         
         self._update_display()
@@ -264,7 +278,7 @@ class CalculatorWindow(QMainWindow, CalculatorView):
     
     def _on_sign_change_clicked(self):
         """부호 변경 버튼 클릭 처리"""
-        if self._current_input != "0":
+        if self._current_input and self._current_input != "0":
             if self._current_input.startswith("-"):
                 self._current_input = self._current_input[1:]
             else:
@@ -302,13 +316,15 @@ class CalculatorWindow(QMainWindow, CalculatorView):
         self._first_number = None
         self._operator = None
         self._second_number = None
-        self._current_input = "0"
+        self._current_input = ""
         self._waiting_for_operand = True
         self._update_display()
     
     def _update_display(self):
         """디스플레이 업데이트"""
-        self._result_label.setText(self._current_input)
+        # 현재 입력값을 결과 라벨에 표시
+        display_text = self._current_input if self._current_input else "0"
+        self._result_label.setText(display_text)
     
     def _update_input_display(self):
         """입력 디스플레이 업데이트"""

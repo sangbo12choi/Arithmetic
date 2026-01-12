@@ -84,6 +84,53 @@ TDD(Test-Driven Development) 방식 중 RED-GREEN-REFACTOR 사이클을 따라 �
 - 코드를 개선하고 리팩토링합니다.
 - 테스트가 여전히 통과하는지 확인합니다.
 
+#### REFACTOR 단계: PyQt GUI 구현 목록
+
+##### Phase 3: PyQt GUI 구현
+
+**3.1 CalculatorWindow 클래스 생성**
+- `QMainWindow` 상속
+- `CalculatorView` 인터페이스 구현
+
+**3.2 UI 컴포넌트 설계**
+- **디스플레이 영역:**
+  - 입력 표시 라인 (현재 입력 중인 수식)
+  - 결과 표시 라인 (계산 결과)
+  
+- **키패드 영역:**
+  - 숫자 버튼: 0-9
+  - 연산자 버튼: +, -, ×, ÷
+  - 기능 버튼: =, +/-, .
+  - 레이아웃: 4x4 그리드 (이미지 참고)
+
+**3.3 이벤트 처리**
+- 버튼 클릭 이벤트 핸들러
+- 숫자 입력 처리
+- 연산자 입력 처리
+- 계산 실행 (= 버튼)
+- 부호 변경 (+/- 버튼)
+
+**목표:**
+- 이미지와 동일한 UI 구현
+- 콘솔 프로그램과 동일한 기능 제공
+
+#### Phase 3 구현 체크리스트
+- [x] `CalculatorWindow` 클래스 생성 (`QMainWindow` 상속)
+- [x] `CalculatorView` 인터페이스 메서드 구현
+- [x] 디스플레이 영역 구현 (입력 표시 라인, 결과 표시 라인)
+- [x] 키패드 영역 구현 (4x4 그리드 레이아웃)
+- [x] 숫자 버튼 (0-9) 구현
+- [x] 연산자 버튼 (+, -, ×) 구현
+- [x] 기능 버튼 (=, +/-, .) 구현
+- [x] 버튼 클릭 이벤트 핸들러 구현
+- [x] 숫자 입력 처리 구현
+- [x] 연산자 입력 처리 구현
+- [x] 계산 실행 (= 버튼) 구현
+- [x] 부호 변경 (+/- 버튼) 구현
+- [x] 오류 처리 및 표시 구현
+
+**참고:** 나눗셈(÷) 버튼은 이미지 레이아웃에 없어 키패드에 포함하지 않았으나, 코드상으로는 나눗셈 연산을 지원합니다.
+
 ## 전제 조건
 
 - Python이 설치되어 있어야 합니다.
@@ -100,12 +147,35 @@ TDD(Test-Driven Development) 방식 중 RED-GREEN-REFACTOR 사이클을 따라 �
 ```
 Arithmetic/
 ├── README.md
-├── arithmetic.py          # 사칙연산 모듈 (구현 예정)
-├── test_arithmetic.py     # 테스트 파일 (구현 예정)
-└── requirements.txt       # 종속성 파일 (필요시)
+├── arithmetic.py                    # 사칙연산 모듈 (Domain Layer)
+├── operator_mapper.py               # 연산자 매핑 유틸리티 (Service Layer)
+├── calculator_service.py            # 계산기 서비스 (Service Layer)
+├── calculator_view.py               # 계산기 뷰 인터페이스 (Presentation Layer)
+├── console_calculator_view.py       # 콘솔 뷰 구현 (Presentation Layer)
+├── gui_calculator_view.py           # GUI 뷰 구현 (Presentation Layer)
+├── arithmetic_console.py            # 콘솔 프로그램 진입점
+├── test_arithmetic.py               # 테스트 파일
+└── requirements.txt                 # 종속성 파일
 ```
 
 ## 실행 방법
+
+### 콘솔 프로그램 실행
+
+```bash
+python arithmetic_console.py
+```
+
+### GUI 프로그램 실행
+
+```bash
+python gui_calculator_view.py
+```
+
+**의존성 설치:**
+```bash
+pip install -r requirements.txt
+```
 
 ### 테스트 실행
 
